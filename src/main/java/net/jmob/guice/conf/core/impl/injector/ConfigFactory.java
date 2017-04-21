@@ -1,5 +1,6 @@
 package net.jmob.guice.conf.core.impl.injector;
 
+import static com.typesafe.config.ConfigFactory.parseFileAnySyntax;
 import static com.typesafe.config.ConfigFactory.parseResourcesAnySyntax;
 
 import com.typesafe.config.Config;
@@ -11,6 +12,9 @@ final class ConfigFactory {
 
     Config getConfig(ConfigParseOptions parseOptions, BindConfig bindConfig) {
         Config config = parseResourcesAnySyntax(bindConfig.value(), parseOptions);
+        if (config.isEmpty()) {
+            config = parseFileAnySyntax(new File(bindConfig.value()), parseOptions);
+        }
         if (!bindConfig.path().isEmpty()) {
             config = config.getConfig(bindConfig.path());
         }
